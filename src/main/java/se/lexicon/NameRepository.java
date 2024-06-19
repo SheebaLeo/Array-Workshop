@@ -1,5 +1,7 @@
 package se.lexicon;
 
+import java.util.Arrays;
+
 /**
  * The NameRepository class provides methods to manage a list of names.
  * It offers functionalities such as adding, removing, finding, and updating names.
@@ -16,17 +18,21 @@ public class NameRepository {
      */
     public static int getSize() {
         //todo: PART 1: implement getSize method
-        return 0;
+        int length = names.length;
+        return length;
     }
 
 
     /**
      * Sets the names array to the provided array of names & it should replace all existing names.
      *
-     * @param names The array of names to set.
+     * @param newNames The array of names to set.
      */
-    public static void setNames(String[] names) {
+    public static void setNames(String[] newNames) {
         //todo: PART 1: implement setNames method
+        if ((newNames != null) || (newNames.length != 0)) {
+            names = newNames;
+        }
     }
 
 
@@ -35,6 +41,7 @@ public class NameRepository {
      */
     public static void clear() {
         //todo: PART 1: implement clear method
+        names = new String[0];
     }
 
 
@@ -45,7 +52,10 @@ public class NameRepository {
      */
     public static String[] findAll() {
         //todo: PART 1: implement findAll method
-        return null;
+        String[] foundNamesArray = new String[0];
+        //foundNamesArray = names.clone();
+        foundNamesArray =  Arrays.copyOf(names, names.length);
+        return foundNamesArray;
     }
 
 
@@ -57,6 +67,11 @@ public class NameRepository {
      */
     public static String find(String fullName) {
         //todo: PART 2: implement find method
+        for (String name : names) {
+            if (name.equals(fullName)) {
+                return name;
+            }
+        }
         return null;
     }
 
@@ -69,7 +84,13 @@ public class NameRepository {
      */
     public static boolean add(String fullName) {
         //todo: PART 2: implement add method
-        return false;
+        if (find(fullName) == null) {
+            String[] newNames = Arrays.copyOf(names, names.length + 1);
+            newNames[newNames.length - 1] = fullName;
+            names = newNames;
+            return true; // Name already exists
+        }
+        return false;// Name already exist
     }
 
 
@@ -81,7 +102,24 @@ public class NameRepository {
      */
     public static String[] findByFirstName(String firstName) {
         //todo: PART 3: findByFirstName method
-        return null;
+        // First, count the number of matches
+        int count = 0;
+        for (String name : names) {
+            if (name.startsWith(firstName + " ")) {
+                count++;
+            }
+        }
+
+        // Create an array to hold the matching names
+        String[] matchingFristNames = new String[count];
+        int index = 0;
+        for (String name : names) {
+            if (name.startsWith(firstName + " ")) {
+                matchingFristNames[index++] = name;
+            }
+        }
+
+        return matchingFristNames;
     }
 
 
@@ -93,7 +131,27 @@ public class NameRepository {
      */
     public static String[] findByLastName(String lastName) {
         //todo: PART 3: implement findByLastName method
-        return null;
+        int count = 0;
+        for (String name : names) {
+            // Split the name into parts to find the last name
+            String[] parts = name.split(" ");
+            if (parts.length > 1 && parts[1].equals(lastName)) {
+                count++;
+            }
+        }
+
+        // Create an array to hold the matching names
+        String[] lastMatchingNames = new String[count];
+        int index = 0;
+        for (String name : names) {
+            // Split the name into parts to find the last name
+            String[] parts = name.split(" ");
+            if (parts.length > 1 && parts[1].equals(lastName)) {
+                lastMatchingNames[index++] = name;
+            }
+        }
+
+        return lastMatchingNames;
     }
 
 
@@ -106,7 +164,30 @@ public class NameRepository {
      */
     public static boolean update(String original, String updatedName) {
         //todo: PART 3: implement update method
-        return false;
+        // Find the index of the original name in the names array
+        int index = -1;
+        for (int i = 0; i < names.length; i++) {
+            if (names[i].equals(original)) {
+                index = i;
+                break;
+            }
+        }
+
+        // If original name not found, return false
+        if (index == -1) {
+            return false;
+        }
+
+        // Check if updatedName already exists in the array (excluding the original itself)
+        for (int i = 0; i < names.length; i++) {
+            if (i != index && names[i].equals(updatedName)) {
+                return false; // Updated name already exists
+            }
+        }
+
+        // Perform the update
+        names[index] = updatedName;
+        return true;
     }
 
 
@@ -118,8 +199,25 @@ public class NameRepository {
      */
     public static boolean remove(String fullName) {
         //todo: PART 4: implement remove method
-        return false;
+        int index = -1;
+        for (int i = 0; i < names.length; i++) {
+            if (names[i].equals(fullName)) {
+                index = i;
+                break;
+            }
+        }
+        // If fullName not found, return false
+        if (index == -1) {
+            return false;
+        }
+        // Create a new array with one less slot
+        String[] newNames = new String[names.length - 1];
+        // Copy the names before the removed index
+        System.arraycopy(names, 0, newNames, 0, index);
+        // Copy the names after the removed index
+        System.arraycopy(names, index + 1, newNames, index, names.length - index - 1);
+        // Update the names array
+        names = newNames;
+        return true;
     }
-
-
 }
